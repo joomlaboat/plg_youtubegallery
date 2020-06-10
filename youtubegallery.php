@@ -57,7 +57,10 @@ class plgContentYoutubeGallery extends JPlugin
 
 	public static function plgYoutubeGallery(&$text_original, $byId)
 	{
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_youtubegallery'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'misc.php');
+		$path=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_youtubegallery'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR;
+		require_once($path.'_defines.php');
+				
+		
 		$text=plgContentYoutubeGallery::strip_html_tags_textarea($text_original);
 
 		$options=array();
@@ -160,13 +163,13 @@ class plgContentYoutubeGallery extends JPlugin
 			$custom_itemid=(int)$opt[2];
 
 
-		$misc=new YouTubeGalleryMisc;
-		$misc->videolist_row = $videolist_row;
-		$misc->theme_row = $theme_row;
+		$ygDB=new YouTubeGalleryDB;
+		$ygDB->videolist_row = $videolist_row;
+		$ygDB->theme_row = $theme_row;
 
 		$total_number_of_rows=0;
 
-		$misc->update_playlist();
+		$ygDB->update_playlist();
 
 		$videoid=JFactory::getApplication()->input->getCmd('videoid','');
 		if(!isset($videoid) or $videoid=='')
@@ -176,7 +179,7 @@ class plgContentYoutubeGallery extends JPlugin
 			
 			if($video!='')
 			{
-				$videoid=YouTubeGalleryMisc::getVideoIDbyAlias($video);
+				$videoid=YouTubeGalleryDB::getVideoIDbyAlias($video);
 				JFactory::getApplication()->input->set('videoid',$videoid);
 			}
 			
@@ -189,7 +192,7 @@ class plgContentYoutubeGallery extends JPlugin
 		$jinput=JFactory::getApplication()->input;
 		if($jinput->getInt('yg_api')==1)
         {
-			$videolist=$misc->getVideoList_FromCache_From_Table($videoid_new,$total_number_of_rows,false);
+			$videolist=$ygDB->getVideoList_FromCache_From_Table($videoid_new,$total_number_of_rows,false);
             $result=json_encode($videolist);
 
             if (ob_get_contents())
@@ -207,7 +210,7 @@ class plgContentYoutubeGallery extends JPlugin
 		}
         else
 		{
-			$videolist=$misc->getVideoList_FromCache_From_Table($videoid_new,$total_number_of_rows,false);
+			$videolist=$ygDB->getVideoList_FromCache_From_Table($videoid_new,$total_number_of_rows,false);
 		}
 
 		if($videoid=='')
