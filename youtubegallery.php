@@ -1,7 +1,6 @@
 <?php
 /**
  * YoutubeGallery Joomla! Plugin
- * @version 5.0.0
  * @author Ivan Komlev< <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @GNU General Public License
@@ -33,7 +32,6 @@ class plgContentYoutubeGallery extends JPlugin
 {
 
 	public function onContentPrepare($context, &$article, &$params, $limitstart=0) {
-
 
 		$count=0;
 		$count+=plgContentYoutubeGallery::plgYoutubeGallery($article->text,true);
