@@ -5,6 +5,8 @@
  * @link http://www.joomlaboat.com
  * @GNU General Public License
  **/
+ 
+ 
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -163,6 +165,7 @@ class plgContentYoutubeGallery extends JPlugin
 
 		$ygDB=new YouTubeGalleryDB;
 		$ygDB->videolist_row = $videolist_row;
+		
 		$ygDB->theme_row = $theme_row;
 
 		$total_number_of_rows=0;
@@ -216,8 +219,6 @@ class plgContentYoutubeGallery extends JPlugin
 			if($theme_row->playvideo==1 and $videoid_new!='')
 				$videoid=$videoid_new;
 		}
-
-		//print_r($videolist);
 
 		$renderer= new YouTubeGalleryRenderer;
 
