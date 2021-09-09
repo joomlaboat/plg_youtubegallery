@@ -135,7 +135,7 @@ class plgContentYoutubeGallery extends JPlugin
 
 		//Video List data
 		$db->setQuery($query_list);
-		if (!$db->query())    die ( $db->stderr());
+
 		$videolist_rows = $db->loadObjectList();
 		if(count($videolist_rows)==0)
 		{
@@ -146,7 +146,7 @@ class plgContentYoutubeGallery extends JPlugin
 
 		//Theme data
 		$db->setQuery($query_theme);
-		if (!$db->query())    die ( $db->stderr());
+
 		$theme_rows = $db->loadObjectList();
 		if(count($theme_rows)==0)
 		{
