@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+/*
+
 	function plgContentYouTubeGallery(&$row, &$params, $page=0)
 	{
 		if (is_object($row)) {
@@ -25,9 +27,14 @@ defined('_JEXEC') or die('Restricted access');
 				plgContentYoutubeGallery::plgYoutubeGallery($row, true);
 			}
 		}
+	
+	
 	}
+*/
 
-jimport('joomla.plugin.plugin');
+use YouTubeGallery\Helper;
+
+//jimport('joomla.plugin.plugin');
 class plgContentYoutubeGallery extends JPlugin
 {
 
@@ -55,9 +62,9 @@ class plgContentYoutubeGallery extends JPlugin
 
 	public static function plgYoutubeGallery(&$text_original, $byId)
 	{
-		$path=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_youtubegallery'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR;
-		require_once($path.'_defines.php');
-				
+		$path=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_youtubegallery'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'youtubegallery'.DIRECTORY_SEPARATOR;
+		require_once($path.'loader.php');
+		YGLoadClasses();
 		
 		$text=plgContentYoutubeGallery::strip_html_tags_textarea($text_original);
 
@@ -71,9 +78,6 @@ class plgContentYoutubeGallery extends JPlugin
 		if(count($fList)==0)
 			return 0;
 
-
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_youtubegallery'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'render.php');
-
 		for($i=0; $i<count($fList);$i++)
 		{
 			$replaceWith=plgContentYoutubeGallery::getYoutubeGallery($options[$i],$i,$byId);
@@ -83,8 +87,6 @@ class plgContentYoutubeGallery extends JPlugin
 		return count($fList);
 	}
 
-
-
 	public static function getYoutubeGallery($galleryparams,$count,$byId)
 	{
 		$result='';
@@ -92,7 +94,7 @@ class plgContentYoutubeGallery extends JPlugin
 		$opt=explode(',',$galleryparams);
 		if(count($opt)<2)
 		{
-			JFactory::getApplication()->enqueueMessage(JText::_( 'PLG_YOUTUBEGALLERY_ERROR_THEME_NOT_SET' ), 'error');
+			JFactory::getApplication()->enqueueMessage(JText::_( 'PLG_CONTENT_YOUTUBEGALLERY_ERROR_THEME_NOT_SET' ), 'error');
 			return '';
 		}
 
@@ -103,7 +105,7 @@ class plgContentYoutubeGallery extends JPlugin
 			$listid=(int)$opt[0];
 			if(isset($opt[3]) and (int)$opt[3]!=0)
 			{
-				$isMobile=YouTubeGalleryMisc::check_user_agent('mobile');
+				$isMobile=Helper::check_user_agent('mobile');
 				if($isMobile)
 					$themeid=(int)$opt[3];
 				else
@@ -112,15 +114,15 @@ class plgContentYoutubeGallery extends JPlugin
 			else
 				$themeid=(int)$opt[1];
 
-			$query_list = 'SELECT * FROM #__youtubegallery_videolists WHERE id='.$listid.' LIMIT 1';
-			$query_theme = 'SELECT * FROM #__youtubegallery_themes WHERE id='.$themeid.' LIMIT 1';
+			$query_list = 'SELECT * FROM #__customtables_table_youtubegalleryvideolists WHERE id='.$listid.' LIMIT 1';
+			$query_theme = 'SELECT * FROM #__customtables_table_youtubegallerythemes WHERE id='.$themeid.' LIMIT 1';
 		}
 		else
 		{
 			$listname=trim($opt[0]);
 			if(isset($opt[3]) and trim($opt[3])!='')
 			{
-				$isMobile=YouTubeGalleryMisc::check_user_agent('mobile');
+				$isMobile=Helper::check_user_agent('mobile');
 				if($isMobile)
 					$themename=trim($opt[3]);
 				else
@@ -129,8 +131,8 @@ class plgContentYoutubeGallery extends JPlugin
 			else
 				$themename=trim($opt[1]);
 
-			$query_list = 'SELECT * FROM #__youtubegallery_videolists WHERE listname="'.$listname.'" LIMIT 1';
-			$query_theme = 'SELECT * FROM #__youtubegallery_themes WHERE themename="'.$themename.'" LIMIT 1';
+			$query_list = 'SELECT * FROM #__customtables_table_youtubegalleryvideolists WHERE es_listname="'.$listname.'" LIMIT 1';
+			$query_theme = 'SELECT * FROM #__customtables_table_youtubegallerythemes WHERE es_themename="'.$themename.'" LIMIT 1';
 		}
 
 		//Video List data
@@ -139,7 +141,7 @@ class plgContentYoutubeGallery extends JPlugin
 		$videolist_rows = $db->loadObjectList();
 		if(count($videolist_rows)==0)
 		{
-			JFactory::getApplication()->enqueueMessage(JText::_( 'PLG_YOUTUBEGALLERY_ERROR_VIDEOLIST_NOT_SET' ), 'error');
+			JFactory::getApplication()->enqueueMessage(JText::_( 'PLG_CONTENT_YOUTUBEGALLERY_ERROR_VIDEOLIST_NOT_SET' ), 'error');
 			return '';
 		}
 		$videolist_row=$videolist_rows[0];
@@ -150,7 +152,7 @@ class plgContentYoutubeGallery extends JPlugin
 		$theme_rows = $db->loadObjectList();
 		if(count($theme_rows)==0)
 		{
-			JFactory::getApplication()->enqueueMessage(JText::_( 'PLG_YOUTUBEGALLERY_ERROR_THEME_NOT_SET' ), 'error');
+			JFactory::getApplication()->enqueueMessage(JText::_( 'PLG_CONTENT_YOUTUBEGALLERY_ERROR_THEME_NOT_SET' ), 'error');
 			return '';
 		}
 		$theme_row=$theme_rows[0];
@@ -159,7 +161,6 @@ class plgContentYoutubeGallery extends JPlugin
 		$custom_itemid=0;
 		if(isset($opt[2]))
 			$custom_itemid=(int)$opt[2];
-
 
 		$ygDB=new YouTubeGalleryDB;
 		$ygDB->videolist_row = $videolist_row;
@@ -184,8 +185,8 @@ class plgContentYoutubeGallery extends JPlugin
 			
 		}
 
-		if($theme_row->playvideo==1 and $videoid!='')
-			$theme_row->autoplay=1;
+		if($theme_row->es_playvideo==1 and $videoid!='')
+			$theme_row->es_autoplay=1;
 
 		$videoid_new=$videoid;
 		$jinput=JFactory::getApplication()->input;
@@ -214,7 +215,7 @@ class plgContentYoutubeGallery extends JPlugin
 
 		if($videoid=='')
 		{
-			if($theme_row->playvideo==1 and $videoid_new!='')
+			if($theme_row->es_playvideo==1 and $videoid_new!='')
 				$videoid=$videoid_new;
 		}
 
@@ -232,8 +233,6 @@ class plgContentYoutubeGallery extends JPlugin
 		return $result;
 
 	}
-
-
 
 	public static function getListToReplace($par,&$options,&$text)
 	{
@@ -264,12 +263,9 @@ class plgContentYoutubeGallery extends JPlugin
 		$fList[]=$notestr;
 
 		$opt_string=substr($temp_text,$ps+$l,$pe-$ps-$l);
-		$options[]=YouTubeGalleryMisc::html2txt($opt_string);
-
-
+		$options[]=Helper::html2txt($opt_string);
 
 		$offset=$ps+$l;
-
 
 		}while(!($pe===false));
 
