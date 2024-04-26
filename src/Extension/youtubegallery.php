@@ -1,69 +1,76 @@
 <?php
 /**
- * YoutubeGallery Joomla! Plugin
- * @author Ivan Komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @GNU General Public License
+ * @package     YoutubeGallery
+ * @subpackage  YoutubeGallery Content Plugin
+ * @author      Ivan Komlev <support@joomlaboat.com>
+ * @copyright   (C) 2024 Ivan Komlev. <https://www.joomlaboat.com>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  **/
 
-defined('_JEXEC') or die('Restricted access');
+namespace YoutubeGallery\Plugin\Content\YoutubeGallery\Extension;
+
+defined('_JEXEC') or die();
 
 use CustomTables\Environment;
+use Exception;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Version;
+use Joomla\Database\DatabaseInterface;
 use YouTubeGallery\Helper;
+use YouTubeGalleryDB;
+use YouTubeGalleryRenderer;
 
-//jimport('joomla.plugin.plugin');
-class plgContentYoutubeGallery extends JPlugin
+final class YoutubeGallery extends CMSPlugin
 {
-
-    public function onContentPrepare($context, &$article, &$params, $limitstart = 0)
+    public function onContentPrepare($context, &$article, &$params, $page = 0)
     {
-
         $count = 0;
-        $count += plgContentYoutubeGallery::plgYoutubeGallery($article->text, true);
-        $count += plgContentYoutubeGallery::plgYoutubeGallery($article->text, false);
-
+        $count += self::plgYoutubeGallery($article->text, true);
+        $count += self::plgYoutubeGallery($article->text, false);
     }
 
-    public static function plgYoutubeGallery(&$text_original, $byId)
+    /**
+     * @throws \Exception
+     */
+    private static function plgYoutubeGallery(&$text_original, $byId): int
     {
         $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_youtubegallery' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'youtubegallery' . DIRECTORY_SEPARATOR;
         require_once($path . 'loader.php');
         YGLoadClasses();
 
-        $text = plgContentYoutubeGallery::strip_html_tags_textarea($text_original);
+        $text = self::strip_html_tags_textarea($text_original);
 
         $options = array();
         if ($byId)
-            $fList = plgContentYoutubeGallery::getListToReplace('youtubegalleryid', $options, $text);
+            $fList = self::getListToReplace('youtubegalleryid', $options, $text);
         else
-            $fList = plgContentYoutubeGallery::getListToReplace('youtubegallery', $options, $text);
-
+            $fList = self::getListToReplace('youtubegallery', $options, $text);
 
         if (count($fList) == 0)
             return 0;
 
         for ($i = 0; $i < count($fList); $i++) {
-            $replaceWith = plgContentYoutubeGallery::getYoutubeGallery($options[$i], $i, $byId);
+            $replaceWith = self::getYoutubeGallery($options[$i], $i, $byId);
             $text_original = str_replace($fList[$i], $replaceWith, $text_original);
         }
 
         return count($fList);
     }
 
-    public static function strip_html_tags_textarea($text)
+    public static function strip_html_tags_textarea($text): string
     {
-        $text = preg_replace(
+        return preg_replace(
             array(
                 // Remove invisible content
                 '@<textarea[^>]*?>.*?</textarea>@siu',
             ),
             array(
                 ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', "$0", "$0", "$0", "$0", "$0", "$0", "$0", "$0",), $text);
-
-        return $text;
     }
 
-    public static function getListToReplace($par, &$options, &$text)
+    public static function getListToReplace($par, &$options, $text): array
     {
         $temp_text = preg_replace("/<textarea\b[^>]*>(.*?)<\/textarea>/i", "", $text);
 
@@ -78,7 +85,6 @@ class plgContentYoutubeGallery extends JPlugin
             $ps = strpos($text, '{' . $par . '=', $offset);
             if ($ps === false)
                 break;
-
 
             if ($ps + $l >= strlen($temp_text))
                 break;
@@ -101,17 +107,26 @@ class plgContentYoutubeGallery extends JPlugin
         return $fList;
     }
 
+    /**
+     * @throws Exception
+     */
     public static function getYoutubeGallery($galleryparams, $count, $byId)
     {
         $result = '';
 
         $opt = explode(',', $galleryparams);
         if (count($opt) < 2) {
-            JFactory::getApplication()->enqueueMessage(JText::_('PLG_CONTENT_YOUTUBEGALLERY_ERROR_THEME_NOT_SET'), 'error');
+            Factory::getApplication()->enqueueMessage(Text::_('PLG_CONTENT_YOUTUBEGALLERY_ERROR_THEME_NOT_SET'), 'error');
             return '';
         }
 
-        $db = JFactory::getDBO();
+        $version_object = new Version;
+        $version = (int)$version_object->getShortVersion();
+
+        if ($version < 4)
+            $db =  Factory::getDbo();
+        else
+            $db = Factory::getContainer()->get(DatabaseInterface::class);
 
         if ($byId) {
             $listid = (int)$opt[0];
@@ -146,7 +161,7 @@ class plgContentYoutubeGallery extends JPlugin
 
         $videoListRows = $db->loadObjectList();
         if (count($videoListRows) == 0) {
-            JFactory::getApplication()->enqueueMessage(JText::_('PLG_CONTENT_YOUTUBEGALLERY_ERROR_VIDEOLIST_NOT_SET'), 'error');
+            Factory::getApplication()->enqueueMessage(Text::_('PLG_CONTENT_YOUTUBEGALLERY_ERROR_VIDEOLIST_NOT_SET'), 'error');
             return '';
         }
         $videoListRow = $videoListRows[0];
@@ -156,44 +171,40 @@ class plgContentYoutubeGallery extends JPlugin
 
         $theme_rows = $db->loadObjectList();
         if (count($theme_rows) == 0) {
-            JFactory::getApplication()->enqueueMessage(JText::_('PLG_CONTENT_YOUTUBEGALLERY_ERROR_THEME_NOT_SET'), 'error');
+            Factory::getApplication()->enqueueMessage(Text::_('PLG_CONTENT_YOUTUBEGALLERY_ERROR_THEME_NOT_SET'), 'error');
             return '';
         }
+
         $theme_row = $theme_rows[0];
-
-
         $custom_itemid = 0;
         if (isset($opt[2]))
             $custom_itemid = (int)$opt[2];
 
         $ygDB = new YouTubeGalleryDB;
         $ygDB->videoListRow = $videoListRow;
-
         $ygDB->theme_row = $theme_row;
-
         $total_number_of_rows = 0;
-
         $ygDB->update_playlist();
 
-        $videoid = JFactory::getApplication()->input->getCmd('videoid', '');
+        $videoid = Factory::getApplication()->input->getCmd('videoid', '');
         if (!isset($videoid) or $videoid == '') {
-            $video = JFactory::getApplication()->input->getVar('video', '');
+            $video = Factory::getApplication()->input->getString('video', '');
             $video = preg_replace('/[^a-zA-Z0-9-_]+/', '', $video);
 
             if ($video != '') {
                 $videoid = YouTubeGalleryDB::getVideoIDbyAlias($video);
-                JFactory::getApplication()->input->set('videoid', $videoid);
+                Factory::getApplication()->input->set('videoid', $videoid);
             }
-
         }
 
         if ($theme_row->es_playvideo == 1 and $videoid != '')
             $theme_row->es_autoplay = 1;
 
         $videoid_new = $videoid;
-        $jinput = JFactory::getApplication()->input;
+        $jinput = Factory::getApplication()->input;
+        $videolist = $ygDB->getVideoList_FromCache_From_Table($videoid_new, $total_number_of_rows);
+
         if ($jinput->getInt('yg_api') == 1) {
-            $videolist = $ygDB->getVideoList_FromCache_From_Table($videoid_new, $total_number_of_rows, false);
             $result = json_encode($videolist);
 
             if (ob_get_contents())
@@ -206,10 +217,6 @@ class plgContentYoutubeGallery extends JPlugin
 
             echo $result;
             die;
-
-            return '';
-        } else {
-            $videolist = $ygDB->getVideoList_FromCache_From_Table($videoid_new, $total_number_of_rows, false);
         }
 
         if ($videoid == '') {
@@ -229,7 +236,5 @@ class plgContentYoutubeGallery extends JPlugin
         );
 
         return $result;
-
     }
-
-}//class
+}
