@@ -2,12 +2,12 @@
 <extension version="3.0" type="plugin" group="content" method="upgrade" client="site">
     <name>Content - Youtube Gallery</name>
     <author>JoomlaBoat.com</author>
-    <creationDate>April 2024</creationDate>
+    <creationDate>May 2024</creationDate>
     <copyright>Copyright (C) 2009-2024 Ivan Komlev. All rights reserved.</copyright>
     <license>GNU General Public License</license>
     <authorEmail>support@joomlaboat.com</authorEmail>
     <authorUrl>https://www.joomlaboat.com/</authorUrl>
-    <version>5.5.9</version>
+    <version>5.6.1</version>
     <namespace path="src">YoutubeGallery\Plugin\Content\YoutubeGallery</namespace>
     <description><![CDATA[
     <p>A plugin to show Youtube Gallery in any article.</p>
@@ -34,42 +34,9 @@
         <folder plugin="youtubegallery">services</folder>
         <folder>src</folder>
     </files>
-<!--
-    <config>
-        <fields name="params">
-            <fieldset name="basic">
-                <field
-                        name="cache"
-                        type="list"
-                        default="0"
-                        label="COM_MODULES_FIELD_CACHING_LABEL"
-                        description="COM_MODULES_FIELD_CACHING_DESC">
-                    <option
-                            value="1">JGLOBAL_USE_GLOBAL
-                    </option>
-                    <option
-                            value="0">COM_MODULES_FIELD_VALUE_NOCACHING
-                    </option>
-                </field>
 
-                <field
-                        name="cache_time"
-                        type="text"
-                        default="900"
-                        label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
-                        description="COM_MODULES_FIELD_CACHE_TIME_DESC"/>
-                <field
-                        name="cachemode"
-                        type="hidden"
-                        default="static">
-                    <option value="static"></option>
-                </field>
-
-            </fieldset>
-        </fields>
-    </config>
--->
     <languages>
         <language tag="en-GB">language/en-GB/plg_content_youtubegallery.ini</language>
+        <language tag="es-ES">language/es-ES/plg_content_youtubegallery.ini</language>
     </languages>
 </extension>

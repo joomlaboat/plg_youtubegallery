@@ -34,7 +34,7 @@ final class YoutubeGallery extends CMSPlugin
     /**
      * @throws \Exception
      */
-    private static function plgYoutubeGallery(&$text_original, $byId): int
+    public static function plgYoutubeGallery(&$text_original, $byId): int
     {
         $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_youtubegallery' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'youtubegallery' . DIRECTORY_SEPARATOR;
         require_once($path . 'loader.php');
