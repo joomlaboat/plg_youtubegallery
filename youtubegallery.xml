@@ -2,12 +2,12 @@
 <extension version="3.0" type="plugin" group="content" method="upgrade" client="site">
     <name>Content - Youtube Gallery</name>
     <author>JoomlaBoat.com</author>
-    <creationDate>May 2024</creationDate>
+    <creationDate>July 2024</creationDate>
     <copyright>Copyright (C) 2009-2024 Ivan Komlev. All rights reserved.</copyright>
     <license>GNU General Public License</license>
     <authorEmail>support@joomlaboat.com</authorEmail>
     <authorUrl>https://www.joomlaboat.com/</authorUrl>
-    <version>5.6.1</version>
+    <version>5.6.2</version>
     <namespace path="src">YoutubeGallery\Plugin\Content\YoutubeGallery</namespace>
     <description><![CDATA[
     <p>A plugin to show Youtube Gallery in any article.</p>
