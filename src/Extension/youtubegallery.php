@@ -1,7 +1,7 @@
 <?php
 /**
- * @package     YoutubeGallery
- * @subpackage  YoutubeGallery Content Plugin
+ * @package     YouTubeGallery
+ * @subpackage  YouTubeGallery Content Plugin
  * @author      Ivan Komlev <support@joomlaboat.com>
  * @copyright   (C) 2024 Ivan Komlev. <https://www.joomlaboat.com>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt

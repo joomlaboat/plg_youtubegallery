@@ -1,6 +1,6 @@
 # plg_youtubegallery
 
-A plugin to show Youtube Gallery in any article.
+A plugin to show YouTube Gallery in any article.
 
 Plugin to show a catalog of selected YouTube (not only) videos. All you need is to create a Video List and a Theme (or you may download free Theme).
 

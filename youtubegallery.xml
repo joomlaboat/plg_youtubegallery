@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.0" type="plugin" group="content" method="upgrade" client="site">
-    <name>Content - Youtube Gallery</name>
+    <name>Content - YouTube Gallery</name>
     <author>JoomlaBoat.com</author>
-    <creationDate>July 2024</creationDate>
+    <creationDate>September 2024</creationDate>
     <copyright>Copyright (C) 2009-2024 Ivan Komlev. All rights reserved.</copyright>
     <license>GNU General Public License</license>
     <authorEmail>support@joomlaboat.com</authorEmail>
     <authorUrl>https://www.joomlaboat.com/</authorUrl>
-    <version>5.6.2</version>
+    <version>5.6.3</version>
     <namespace path="src">YoutubeGallery\Plugin\Content\YoutubeGallery</namespace>
     <description><![CDATA[
-    <p>A plugin to show Youtube Gallery in any article.</p>
+    <p>A plugin to show YouTube Gallery in any article.</p>
 <p>Plugin to show a catalog of selected YouTube (not only) videos. All you need is to create a Video List and a Theme (or you may download free Theme).</p>
 
 <hr>
