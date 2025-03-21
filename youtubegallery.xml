@@ -7,7 +7,7 @@
     <license>GNU General Public License</license>
     <authorEmail>support@joomlaboat.com</authorEmail>
     <authorUrl>https://www.joomlaboat.com/</authorUrl>
-    <version>5.6.7</version>
+    <version>5.6.8</version>
     <namespace path="src">YoutubeGallery\Plugin\Content\YoutubeGallery</namespace>
     <description><![CDATA[
     <p>A plugin to show YouTube Gallery in any article.</p>
